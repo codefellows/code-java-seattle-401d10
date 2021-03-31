@@ -22,7 +22,7 @@ one Google built called GSON. Add this to your project dependencies in
 
 ```java
 dependencies {
-  compile 'com.google.code.gson:gson:2.8.2'
+  compile 'com.google.code.gson:gson:2.8.6'
 }
 ```
 
