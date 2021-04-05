@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Salmon Cookies</h1>
+    <p>A Gourmet fish food store where we make delicious cookies for salmon and other pets</p>
+
+    <h2>Sales</h2>
+    <table>
+        <tr>
+            <th>Store</th>
+            <th>9am</th>
+            <th>10am</th>
+            <th>11am</th>
+            <th>12pm</th>
+            <th>Total</th>
+        </tr>
+        <tr>
+            <td th:text="${store.name}">Skyway</td>
+
+            <td th:each="soldCookies : ${store.sales}" th:text="${soldCookies}">900</td>
+
+            <td th:text="${store.total}">1452</td>
+        </tr>
+
+        <tr th:each="salmonStore : ${storeArray}">
+            <td th:text="${salmonStore.name}">Skyway</td>
+
+            <td th:each="soldCookies : ${salmonStore.sales}" th:text="${soldCookies}">900</td>
+
+            <td th:text="${salmonStore.total}">1452</td>
+        </tr>
+    </table>
+</body>
+</html>
