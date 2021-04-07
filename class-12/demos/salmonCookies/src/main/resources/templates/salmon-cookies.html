@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Salmon Cookies</h1>
+    <p>A Gourmet fish food store where we make delicious cookies for salmon and other pets</p>
+
+    <h2>Sales</h2>
+    <form action="/cookie-store" method="POST">
+        <fieldset>
+            <legend>Add Store</legend>
+            <label for="namePotato">Name</label>
+            <input type="text" name="namePotato">
+            <label for="minSales">Min Sales</label>
+            <input type="text" name="minSales">
+            <label for="maxSales">Max Sales</label>
+            <input type="text" name="maxSales">
+            <input type="submit" value="add cookie store">
+        </fieldset>
+    </form>
+    <table>
+        <tr>
+            <th>Store</th>
+            <th>9am</th>
+            <th>10am</th>
+            <th>11am</th>
+            <th>12pm</th>
+            <th>Total</th>
+            <th>Delete</th>
+        </tr>
+
+        <tr th:each="salmonStore : ${storeArray}">
+            <td th:text="${salmonStore.name}">Skyway</td>
+
+            <td th:each="soldCookies : ${salmonStore.sales}" th:text="${soldCookies}">900</td>
+
+            <td th:text="${salmonStore.total}">1452</td>
+
+            <td>
+                <form th:action="'/cookie-store/' + ${salmonStore.id} + '?_method=delete'" method="POST">
+                    <input type="submit" value="X">
+                </form>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

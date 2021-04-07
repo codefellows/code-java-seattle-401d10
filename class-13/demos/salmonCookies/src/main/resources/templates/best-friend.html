@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+<!--    all static files can be found as if the static folder `static` was the route-->
+</head>
+<body>
+<!--Passing direct properties 1:1 name="Joel"-->
+<!--Passing direct properties 1:1 friendDuration=2"-->
+    <h1 th:text="${name}">NAME</h1>
+    <p> I have known them for <span th:text="${friendDuration}">YEARS</span> years</p>
+    <p th:text="${occupation}">WHAT THEY DO</p>
+</body>
+</html>
