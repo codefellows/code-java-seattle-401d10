@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <a th:if="loggenIn" href="/admin?loggedIn=true">admin dinosaur page</a>
+    <h1 th:if="${loggedIn}">Friends</h1>
+    <h1 th:unless="${loggedIn}">Please sign up or log in</h1>
+
+    <form action="/signup" method="POST">
+        <h2>signup</h2>
+        <label for="username">username</label>
+        <input type="text" name="username">
+
+        <label for="password">password</label>
+        <input type="password" name="password">
+
+        <input type="submit" value="signup">
+    </form>
+
+    <form action="/login" method="POST">
+        <h2>login</h2>
+        <label for="username">username</label>
+        <input type="text" name="username">
+
+        <label for="password">password</label>
+        <input type="password" name="password">
+
+        <input type="submit" value="login">
+    </form>
+</body>
+</html>
