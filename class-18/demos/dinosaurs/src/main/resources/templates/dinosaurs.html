@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header >
+    <div th:replace="./fragments/nav :: nav-bar"></div>
+</header>
+    <h1>This is the admin only dino page</h1>
+    <h2 th:text="'welcome ' + ${user}"></h2>
+    <h2 uth:utext="${user}"></h2>
+    <a href="/logout">logout</a>
+
+
+    <form action="/dinosaur" method="POST">
+        <fieldset>
+            <legend>Add Dino</legend>
+        <label for="name">
+            Name
+            <input type="text" name="name">
+        </label>
+
+        <label for="color">
+            color
+            <input type="color" name="color">
+        </label>
+
+        <label for="scales">
+            scales
+            <input type="number" name="scales">
+        </label>
+
+        <label for="carnivore">
+            carnivore
+            <input type="checkbox" name="carnivore">
+        </label>
+
+        <input type="submit" value="move to the valley of friendship bakeries">
+        </fieldset>
+
+    </form>
+
+<form action="/cakeGiver" method="POST">
+    <fieldset>
+        <legend>Bake Cake</legend>
+
+        <select name="giverId">
+            <option th:each="dino : ${dinos}" th:text="${dino.name}" th:value="${dino.id}"></option>
+        </select>
+        <select name="receiverId">
+            <option th:each="dino : ${dinos}" th:text="${dino.name}" th:value="${dino.id}"></option>
+        </select>
+
+        <input type="submit" value="bake and send cake">
+    </fieldset>
+</form>
+
+    <ul>
+        <li
+                th:class=" ${partyTime} ? 'party' : '' "
+                th:each="dino : ${dinos}"
+                th:style="'background-color:' + ${dino.color}">
+            <h3 th:text="${dino.name}">Apatasaur</h3>
+            <h4>I received cakes from</h4>
+            <ul>
+                <li
+                        th:class="${partyTime} ? 'party' : '' "
+                        th:each="giver : ${dino.dinosaursIHaveReceivedCakeFrom}"
+                        th:style="'background-color:' + ${giver.color}"
+                        th:text="${giver.name}">
+                Trex</li>
+            </ul>
+        </li>
+    </ul>
+</body>
+</html>

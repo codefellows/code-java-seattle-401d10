@@ -1,0 +1,15 @@
+/*
+https://flaviocopes.com/css-animations/#:~:text=using%20CSS%20Animations-,Introduction,element%20using%20the%20animation%20property.&text=spin%20is%20the%20name%20of,and%20to%20repeat%20it%20infinitely.
+*/
+.party {
+    animation: spin 2s quadratic infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotateZ(0);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
