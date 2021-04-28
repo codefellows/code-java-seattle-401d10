@@ -13,12 +13,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.ncarignan.buyexpensivethings.activities.RecyclerViewPractice;
 import com.ncarignan.buyexpensivethings.activities.UserProfile;
 import com.ncarignan.buyexpensivethings.adapters.SkateboardRecyclerViewAdapter;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+// TODO: 3-2 : implement the adapter's interface method
+public class MainActivity extends AppCompatActivity implements SkateboardRecyclerViewAdapter.ClickOnSkateboardAble {
     public static String TAG = "ncarapp.main";
 
     static int percentOff = 0;
@@ -28,12 +34,35 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        List<String> skateboardDesigns = new ArrayList<>();
+            skateboardDesigns.add("Palm Tree");
+            skateboardDesigns.add("Sunset");
+            skateboardDesigns.add("Beach");
+            skateboardDesigns.add("Gray Sky");
+            skateboardDesigns.add("Mountains");
+            skateboardDesigns.add("Monsters");
+            skateboardDesigns.add("Dragons");
+            skateboardDesigns.add("Spongebob");
+            skateboardDesigns.add("Patrick");
+            skateboardDesigns.add("Skull");
+            skateboardDesigns.add("Ghost");
+            skateboardDesigns.add("Bowser");
+            skateboardDesigns.add("Dog");
+            skateboardDesigns.add("Ginger");
+            skateboardDesigns.add("Snowdrop");
+            skateboardDesigns.add("Trash Can");
+            skateboardDesigns.add("Soda");
+            skateboardDesigns.add("Snowflake");
 
 // TODO: add second recyclerview
         RecyclerView rv = findViewById(R.id.skateboardRecyclerView2);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(new SkateboardRecyclerViewAdapter());
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+        llm.setReverseLayout(true);
+        rv.setLayoutManager(llm);
+
+
+        rv.setAdapter(new SkateboardRecyclerViewAdapter(this, skateboardDesigns));
 
         Button saleButtonPotato = findViewById(R.id.saleButton);
         saleButtonPotato.setOnClickListener(new View.OnClickListener() {
@@ -96,5 +125,15 @@ public class MainActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.textViewUsername)).setText(username);
         }
     }
+
+//    TODO: 3-3 define a callback method that satisfies the interface
+    @Override
+    public void handleClickOnSkateboard(SkateboardRecyclerViewAdapter.SkateBoardViewHolder skateBoardViewHolder) {
+
+//        Toast.makeText(this, skateBoardViewHolder.design, Toast.LENGTH_SHORT).show();
+        Snackbar.make(findViewById(R.id.mainConstraintLayout), skateBoardViewHolder.design, Snackbar.LENGTH_SHORT)
+                .show();
+    }
+
 }
 
