@@ -1,0 +1,5 @@
+type CartItem @model {
+  id: ID!
+  name: String!
+  price: String
+}
