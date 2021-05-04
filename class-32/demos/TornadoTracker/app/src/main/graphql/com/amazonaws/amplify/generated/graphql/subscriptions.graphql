@@ -1,0 +1,34 @@
+# this is an auto generated file. This will be overwritten
+subscription OnCreateTornado {
+  onCreateTornado {
+    id
+    name
+    longitude
+    latitude
+    category
+    createdAt
+    updatedAt
+  }
+}
+subscription OnUpdateTornado {
+  onUpdateTornado {
+    id
+    name
+    longitude
+    latitude
+    category
+    createdAt
+    updatedAt
+  }
+}
+subscription OnDeleteTornado {
+  onDeleteTornado {
+    id
+    name
+    longitude
+    latitude
+    category
+    createdAt
+    updatedAt
+  }
+}

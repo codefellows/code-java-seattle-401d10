@@ -1,0 +1,43 @@
+# this is an auto generated file. This will be overwritten
+mutation CreateTornado(
+  $input: CreateTornadoInput!
+  $condition: ModelTornadoConditionInput
+) {
+  createTornado(input: $input, condition: $condition) {
+    id
+    name
+    longitude
+    latitude
+    category
+    createdAt
+    updatedAt
+  }
+}
+mutation UpdateTornado(
+  $input: UpdateTornadoInput!
+  $condition: ModelTornadoConditionInput
+) {
+  updateTornado(input: $input, condition: $condition) {
+    id
+    name
+    longitude
+    latitude
+    category
+    createdAt
+    updatedAt
+  }
+}
+mutation DeleteTornado(
+  $input: DeleteTornadoInput!
+  $condition: ModelTornadoConditionInput
+) {
+  deleteTornado(input: $input, condition: $condition) {
+    id
+    name
+    longitude
+    latitude
+    category
+    createdAt
+    updatedAt
+  }
+}

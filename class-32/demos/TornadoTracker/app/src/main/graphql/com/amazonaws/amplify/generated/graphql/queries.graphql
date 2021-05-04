@@ -1,0 +1,30 @@
+# this is an auto generated file. This will be overwritten
+query GetTornado($id: ID!) {
+  getTornado(id: $id) {
+    id
+    name
+    longitude
+    latitude
+    category
+    createdAt
+    updatedAt
+  }
+}
+query ListTornados(
+  $filter: ModelTornadoFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listTornados(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      longitude
+      latitude
+      category
+      createdAt
+      updatedAt
+    }
+    nextToken
+  }
+}

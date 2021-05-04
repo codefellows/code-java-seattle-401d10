@@ -1,0 +1,7 @@
+type Tornado @model {
+  id: ID!
+  name: String
+  longitude: Float
+  latitude: Float
+  category: String
+  }
