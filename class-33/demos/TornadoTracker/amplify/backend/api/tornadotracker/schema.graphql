@@ -1,0 +1,20 @@
+type Tornado @model {
+  id: ID!
+  name: String
+  longitude: Float
+  latitude: Float
+  category: String
+  suckedUpThings: [SuckedUpThing] @connection(keyName: "byThing", fields : ["id"])
+}
+
+type SuckedUpThing
+@model
+@key(name: "byThing", fields: ["tornadoId"])
+{
+  id: ID!
+  tornadoId: ID!
+  name: String
+  longitude: Float
+  latitude: Float
+  tornado: Tornado! @connection(fields : ["tornadoId"])
+}
