@@ -1,0 +1,95 @@
+# this is an auto generated file. This will be overwritten
+query GetTornado($id: ID!) {
+  getTornado(id: $id) {
+    id
+    name
+    longitude
+    latitude
+    category
+    suckedUpThings {
+      items {
+        id
+        tornadoId
+        name
+        longitude
+        latitude
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
+  }
+}
+query ListTornados(
+  $filter: ModelTornadoFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listTornados(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      longitude
+      latitude
+      category
+      suckedUpThings {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    nextToken
+  }
+}
+query GetSuckedUpThing($id: ID!) {
+  getSuckedUpThing(id: $id) {
+    id
+    tornadoId
+    name
+    longitude
+    latitude
+    tornado {
+      id
+      name
+      longitude
+      latitude
+      category
+      suckedUpThings {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+query ListSuckedUpThings(
+  $filter: ModelSuckedUpThingFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listSuckedUpThings(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      tornadoId
+      name
+      longitude
+      latitude
+      tornado {
+        id
+        name
+        longitude
+        latitude
+        category
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+    nextToken
+  }
+}
