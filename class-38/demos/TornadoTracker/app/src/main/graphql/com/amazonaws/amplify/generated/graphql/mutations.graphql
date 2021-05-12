@@ -1,0 +1,163 @@
+# this is an auto generated file. This will be overwritten
+mutation CreateTornado(
+  $input: CreateTornadoInput!
+  $condition: ModelTornadoConditionInput
+) {
+  createTornado(input: $input, condition: $condition) {
+    id
+    name
+    longitude
+    latitude
+    category
+    suckedUpThings {
+      items {
+        id
+        tornadoId
+        name
+        longitude
+        latitude
+        s3ImageKey
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
+  }
+}
+mutation UpdateTornado(
+  $input: UpdateTornadoInput!
+  $condition: ModelTornadoConditionInput
+) {
+  updateTornado(input: $input, condition: $condition) {
+    id
+    name
+    longitude
+    latitude
+    category
+    suckedUpThings {
+      items {
+        id
+        tornadoId
+        name
+        longitude
+        latitude
+        s3ImageKey
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
+  }
+}
+mutation DeleteTornado(
+  $input: DeleteTornadoInput!
+  $condition: ModelTornadoConditionInput
+) {
+  deleteTornado(input: $input, condition: $condition) {
+    id
+    name
+    longitude
+    latitude
+    category
+    suckedUpThings {
+      items {
+        id
+        tornadoId
+        name
+        longitude
+        latitude
+        s3ImageKey
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
+  }
+}
+mutation CreateSuckedUpThing(
+  $input: CreateSuckedUpThingInput!
+  $condition: ModelSuckedUpThingConditionInput
+) {
+  createSuckedUpThing(input: $input, condition: $condition) {
+    id
+    tornadoId
+    name
+    longitude
+    latitude
+    s3ImageKey
+    tornado {
+      id
+      name
+      longitude
+      latitude
+      category
+      suckedUpThings {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+mutation UpdateSuckedUpThing(
+  $input: UpdateSuckedUpThingInput!
+  $condition: ModelSuckedUpThingConditionInput
+) {
+  updateSuckedUpThing(input: $input, condition: $condition) {
+    id
+    tornadoId
+    name
+    longitude
+    latitude
+    s3ImageKey
+    tornado {
+      id
+      name
+      longitude
+      latitude
+      category
+      suckedUpThings {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+mutation DeleteSuckedUpThing(
+  $input: DeleteSuckedUpThingInput!
+  $condition: ModelSuckedUpThingConditionInput
+) {
+  deleteSuckedUpThing(input: $input, condition: $condition) {
+    id
+    tornadoId
+    name
+    longitude
+    latitude
+    s3ImageKey
+    tornado {
+      id
+      name
+      longitude
+      latitude
+      category
+      suckedUpThings {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
