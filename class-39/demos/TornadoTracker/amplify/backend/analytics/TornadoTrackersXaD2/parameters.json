@@ -1,0 +1,22 @@
+{
+    "appName": "TornadoTrackersXaD2",
+    "roleName": "pinpointLambdaRolecf21657e",
+    "cloudformationPolicyName": "cloudformationPolicycf21657e",
+    "cloudWatchPolicyName": "cloudWatchPolicycf21657e",
+    "pinpointPolicyName": "pinpointPolicycf21657e",
+    "authPolicyName": "pinpoint_amplify_cf21657e",
+    "unauthPolicyName": "pinpoint_amplify_cf21657e",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    },
+    "appId": "685f4ed6014d48ea839f1e7889646a64"
+}
