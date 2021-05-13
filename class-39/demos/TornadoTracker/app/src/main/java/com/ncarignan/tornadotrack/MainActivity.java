@@ -25,6 +25,10 @@ import android.widget.TextView;
 
 
 import com.amplifyframework.AmplifyException;
+import com.amplifyframework.analytics.AnalyticsEvent;
+import com.amplifyframework.analytics.AnalyticsProperties;
+import com.amplifyframework.analytics.UserProfile;
+import com.amplifyframework.analytics.pinpoint.AWSPinpointAnalyticsPlugin;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.api.aws.GsonVariablesSerializer;
 import com.amplifyframework.api.graphql.GraphQLRequest;
@@ -46,6 +50,7 @@ import com.ncarignan.tornadotrack.activities.CognitoLoginActivity;
 import com.ncarignan.tornadotrack.activities.CognitoSignupActivity;
 import com.ncarignan.tornadotrack.activities.TornadoDetailActivity;
 import com.ncarignan.tornadotrack.adapters.TornadoAdapter;
+import com.ncarignan.tornadotrack.utilities.Analytics;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -58,6 +63,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -67,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
     static int FILE_UPLOAD_REQUEST_CODE = 321;
 
+    static String OPENED_APP_EVENT = "Opened Tornado Tracker";
+
     public static String TAG = "ntornado.main";
 
 //    declare the string joiner here and use that
@@ -75,8 +83,10 @@ public class MainActivity extends AppCompatActivity {
 
     Handler mainThreadHandler;
 
+    Date resumedTime;
 
-//    789518
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,12 +102,23 @@ public class MainActivity extends AppCompatActivity {
 
         // =================== s3 stuff =======================
 
-//        saveMockFileToS3();
-//        getFileFromPhone();
+
         downloadFileFromS3("testScoobyPic");
-//        loadMockFileFroms3()
-//      saveRealFileToS3();
-//      loadAndDisplayRealFileFromS3();
+
+
+
+
+        // Pinpoint tracking
+        AnalyticsEvent e = AnalyticsEvent.builder()
+                .name(OPENED_APP_EVENT)
+                .addProperty("ginger", "is cool")
+                .addProperty("snowdrop", "is a cool cat")
+                .addProperty("snowdropLikesTuna", true)
+                .addProperty("gingersDesiredTreatCount", 10000000)
+                .build();
+
+        Amplify.Analytics.recordEvent(e);
+
 
 
 
@@ -232,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
             Amplify.addPlugin(new AWSApiPlugin());
             Amplify.addPlugin(new AWSCognitoAuthPlugin());
             Amplify.addPlugin(new AWSS3StoragePlugin());
+            Amplify.addPlugin(new AWSPinpointAnalyticsPlugin(getApplication()));
             Amplify.configure(getApplicationContext());
 
         } catch (AmplifyException e) {
@@ -315,7 +337,17 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        resumedTime = new Date();
+
     }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Analytics.getAnalytics().trackTimeSpentOnPage(resumedTime, new Date(), "MainActivity");
+    }
+
+
 
     private GraphQLRequest<Tornado> getTornadoRequest(String name) {
         String document = "query getTornadoByName($name: String!) { "

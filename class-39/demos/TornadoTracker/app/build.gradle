@@ -49,6 +49,7 @@ dependencies {
     implementation 'com.amplifyframework:aws-datastore:1.17.4'
     implementation 'com.amplifyframework:aws-auth-cognito:1.17.4'
     implementation 'com.amplifyframework:aws-storage-s3:1.17.4'
+    implementation 'com.amplifyframework:aws-analytics-pinpoint:1.17.4'
 
     def lifecycle_version = "2.3.1"
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
