@@ -3,20 +3,27 @@ package com.ncarignan.tornadotrack;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.FileUtils;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Button;
@@ -41,7 +48,14 @@ import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.datastore.generated.model.Tornado;
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.CancellationToken;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.ncarignan.tornadotrack.activities.AddTornado;
@@ -67,6 +81,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringJoiner;
 
 public class MainActivity extends AppCompatActivity {
@@ -79,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static String TAG = "ntornado.main";
 
-//    declare the string joiner here and use that
+    //    declare the string joiner here and use that
 //    Declare a list of tornados
     public List<Tornado> tornados = new ArrayList<>();
 
@@ -87,13 +102,19 @@ public class MainActivity extends AppCompatActivity {
 
     Date resumedTime;
 
-
+    FusedLocationProviderClient locationProviderClient;
+    Geocoder geocoder;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        requestLocationPermissions();
+        loadLocationProviderClientAndGeocoder();
+        getCurrentLocation();
+        subscribeToLocationUpdates();
 
         AmplifyConfig.configureAmplify(getApplication(), getApplicationContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -108,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
         downloadFileFromS3("testScoobyPic");
 
 
-
-
         // Pinpoint tracking
         AnalyticsEvent e = AnalyticsEvent.builder()
                 .name(OPENED_APP_EVENT)
@@ -120,8 +139,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         Amplify.Analytics.recordEvent(e);
-
-
 
 
         RecyclerView recyclerView = findViewById(R.id.tornados);
@@ -135,15 +152,14 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-
-        mainThreadHandler = new Handler(this.getMainLooper()){ //this.getMainLooper gets the mainui thread
+        mainThreadHandler = new Handler(this.getMainLooper()) { //this.getMainLooper gets the mainui thread
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
 //                Log.i(TAG, "handleMessage: hit second handler");
-                if(msg.what == 1){
+                if (msg.what == 1) {
                     StringJoiner sj = new StringJoiner(", ");
-                    for(Tornado t : tornados){
+                    for (Tornado t : tornados) {
                         sj.add(t.getName());
                     }
 
@@ -154,24 +170,23 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-
         Amplify.API.query(
                 ModelQuery.list(Tornado.class),
                 response -> {
 //                    StringJoiner sj = new StringJoiner(", ");
-                    for(Tornado t : response.getData()){
+                    for (Tornado t : response.getData()) {
 //                        Log.i(TAG, "Tornado: " + t.getName());
 //                        sj.add(t.getName());
                         tornados.add(t);
                     }
                     Collections.sort(
                             this.tornados,
-                            (a,b) -> {
+                            (a, b) -> {
                                 double first = a.getLatitude() + a.getLongitude();
                                 double second = b.getLatitude() + b.getLongitude();
-                                if(first > second){
+                                if (first > second) {
                                     return 1;
-                                } else if(first < second){
+                                } else if (first < second) {
                                     return -1;
                                 } else {
                                     return 0;
@@ -185,29 +200,28 @@ public class MainActivity extends AppCompatActivity {
         );
 
         ((Button) findViewById(R.id.sendRandomThings)).setOnClickListener(v -> {
-            Intent intent =new Intent(MainActivity.this, SendStuff.class);
+            Intent intent = new Intent(MainActivity.this, SendStuff.class);
             startActivity(intent);
         });
 
         ((Button) findViewById(R.id.addTornadoButton)).setOnClickListener(v -> {
-            Intent intent =new Intent(MainActivity.this, AddTornado.class);
+            Intent intent = new Intent(MainActivity.this, AddTornado.class);
             startActivity(intent);
         });
 
         ((Button) findViewById(R.id.loginPageButton)).setOnClickListener(v -> {
-            Intent intent =new Intent(MainActivity.this, CognitoLoginActivity.class);
+            Intent intent = new Intent(MainActivity.this, CognitoLoginActivity.class);
             startActivity(intent);
         });
 
         ((Button) findViewById(R.id.signupPageButton)).setOnClickListener(v -> {
-            Intent intent =new Intent(MainActivity.this, CognitoSignupActivity.class);
+            Intent intent = new Intent(MainActivity.this, CognitoSignupActivity.class);
             startActivity(intent);
         });
         ((Button) findViewById(R.id.allSuckedUpThingsButton2)).setOnClickListener(v -> {
-            Intent intent =new Intent(MainActivity.this, AllTheSuckedUpThings.class);
+            Intent intent = new Intent(MainActivity.this, AllTheSuckedUpThings.class);
             startActivity(intent);
         });
-
 
 
 //        Code Review
@@ -228,7 +242,121 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
+    }
 
+    void requestLocationPermissions() {
+        // 1. Permissions in the manifest
+        // 2. request permissions
+        // 3. Load the FusedLocationProviderClient
+        // 4. Get a location with getCurrentLocation
+        // 5 Set up a location subscription with an interval time and a callback
+
+
+        requestPermissions(
+                new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, //gps
+                        Manifest.permission.ACCESS_COARSE_LOCATION // other services like wifi and 4g
+                },
+                1
+        );
+    }
+
+    void loadLocationProviderClientAndGeocoder() {
+        locationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+        geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+    }
+
+    void getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, "getCurrentLocation: permission not granted");
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationProviderClient.flushLocations();
+        locationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+            @Override
+            public boolean isCancellationRequested() {
+                return false;
+            }
+
+            @NonNull
+            @Override
+            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+                return null;
+            }
+        })
+                .addOnCompleteListener(
+                        data -> {
+//                            full access to the data, but we probably just need onSuccess for our app
+                            Log.i(TAG, "onComplete: " + data.toString());
+                        }
+                )
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        Log.i(TAG, "onSuccess: " + location.toString());
+//                        Log.i(TAG, "onSuccess: " + location.);
+                        try {
+                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 5);
+                            Log.i(TAG, "getCurrentLocation: addresses" + addresses.toString());
+                            String streetAddress = addresses.get(0).getAddressLine(0);
+                            Log.i(TAG, "getCurrentLocation: " + streetAddress);
+                        } catch (IOException e) {
+                            Log.e(TAG, "getCurrentLocation: failed");
+                            e.printStackTrace();
+                        }
+
+                    }
+                })
+
+                .addOnCanceledListener(() -> Log.i(TAG, "onCanceled: it was canceled"))
+                .addOnFailureListener(error -> Log.i(TAG, "onFailure: " + error.toString()));
+    }
+
+    ;
+
+    void subscribeToLocationUpdates() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                try {
+                    String address = geocoder.getFromLocation(
+                            locationResult.getLastLocation().getLatitude(),
+                            locationResult.getLastLocation().getLongitude(),
+                            1
+                    ).get(0).getAddressLine(0);
+                    Log.i(TAG, "onLocationResult subscribed: " + address);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+//        TODO: start a new thread
+        locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, getMainLooper());
     }
 
     void saveMockFileToS3(){
