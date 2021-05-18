@@ -23,4 +23,3 @@ Amelia
 James
 Chase
 Garhett
-Peng
